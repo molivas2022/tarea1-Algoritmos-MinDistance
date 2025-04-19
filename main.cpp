@@ -18,6 +18,6 @@ int main() {
     space.push_back(p4);
     space.push_back(p5);
 
-    double min_dist = brute_force(space);
-    std::cout << min_dist << "\n";
+    double min_dist = divide_and_conquer(space);
+    //std::cout << min_dist << "\n";
 }

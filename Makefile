@@ -1,12 +1,17 @@
-FLAGS = "-Wall"
-GCC = "g++"
+FLAGS = -Wall
+GCC = g++
 
-main: main.cpp bruteforce.o
-	${GCC} ${FLAGS} -o min_dist.exe main.cpp bruteforce.o
+ALGORITHMS_HEADER = inc/algorithms.h inc/point.h
 
-bruteforce.o: src/bruteforce.cpp inc/algorithms.h inc/point.h
-	${GCC} ${FLAGS} -c src/bruteforce.cpp
+main: main.cpp bruteforce.o divideandconquer.o
+	$(GCC) $(FLAGS) -o min_dist.exe main.cpp bruteforce.o divideandconquer.o
+
+bruteforce.o: src/bruteforce.cpp $(ALGORITHMS_HEADER)
+	$(GCC) $(FLAGS) -c src/bruteforce.cpp
+
+divideandconquer.o: src/divideandconquer.cpp $(ALGORITHMS_HEADER)
+	$(GCC) $(FLAGS) -c src/divideandconquer.cpp	
 
 .PHONY: clean
 clean:
-	del /s *.o *.exe 
+	rm -r *.exe *.o	
