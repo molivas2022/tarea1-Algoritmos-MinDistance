@@ -1,24 +1,27 @@
 #include "inc/algorithms.h"
+#include "inc/test.h"
 
 #include <stdio.h>
+#include <cmath>
 
 int main() {
-    std::vector<Point> space;
+    Clock clock;
+    RealRandom random(0, 100);
 
-    Point p1 = Point(1, 2);
-    Point p2 = Point(4, 1);
-    Point p3 = Point(-6, 1);
-    Point p4 = Point(-3, -3);
-    Point p5 = Point(-3, -9);
+    long long size = 1 << 12;
+    auto set = random.randomPointVector(size);
 
+    clock.start();
+    auto time = clock.lap();
+    double value;
+    
+    time = clock.lap();
+    value = brute_force(set);
+    time = clock.lap();
+    printf("Brute force             Return value: %.15f     Elapsed time: %.0f\n", value, time);
 
-    space.push_back(p1);
-    space.push_back(p2);
-    space.push_back(p3);
-    space.push_back(p4);
-    space.push_back(p5);
-
-    double min_bruteforce = brute_force(space);
-    double min_divideandconquer = divide_and_conquer(space);
-    printf("Brute force: %.15f\nDivide and Conquer: %.15f\n", min_bruteforce, min_divideandconquer);
+    time = clock.lap();
+    value = divide_and_conquer(set);
+    time = clock.lap();
+    printf("Divide and conquer      Return value: %.15f     Elapsed time: %.0f\n", value, time);
 }
