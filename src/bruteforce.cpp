@@ -1,7 +1,7 @@
 #include "../inc/algorithms.h"
 
 #include <iostream>
-#include <math.h>
+#include <cmath>
 
 double brute_force(std::vector<Point> points) {
     double min_dist = __DBL_MAX__;
@@ -25,8 +25,7 @@ double brute_force_squared(std::vector<Point> points) {
     double min_dist = __DBL_MAX__;
 
     for (int i = 0; i < (int) points.size(); i++) {
-        for (int j = 0; j < (int) points.size(); j++) {
-            if (i == j) continue;
+        for (int j = i+1; j < (int) points.size(); j++) {
             
             Point p1 = points.at(i);
             Point p2 = points.at(j);
@@ -53,5 +52,5 @@ double brute_force_upgrade(std::vector<Point> points) {
         }
     }
 
-    return min_dist;
+    return sqrt(min_dist);
 }

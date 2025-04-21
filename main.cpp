@@ -3,6 +3,7 @@
 
 #include <stdio.h>
 #include <iostream>
+#include <fstream>
 #include <string>
 #include <cmath>
 
@@ -18,11 +19,17 @@ public:
     }
 };
 
-std::string CSV_FORMAT = "NAME;SIZE;TIME";
+std::string CSV_FORMAT = "NAME;EXPONENT;SIZE;TIME";
+std::string CSV_LOCATION = "result.csv";
 
-void test(std::vector<Algorithm> algorithms, std::vector<long long>sizes, long long repetitions) {
+void test(std::vector<Algorithm> algorithms, std::vector<double>size_exps, long long repetitions) {
 
-    std::cout << CSV_FORMAT << std::endl;
+    std::ofstream file(CSV_LOCATION);
+    if (!file.is_open()) {
+        std::cerr << "Failed to open file.\n";
+        return;
+    }
+    file << CSV_FORMAT << std::endl;
     
     Clock clock;
     clock.start();
@@ -30,7 +37,8 @@ void test(std::vector<Algorithm> algorithms, std::vector<long long>sizes, long l
     long long mismatch_count = 0;
 
     /* por cada tamaño de entrada */
-    for (long long size: sizes) {
+    for (double exp: size_exps) {
+        long long size = round(pow(2, exp));
 
         std::vector<long long> total_time(algorithms.size()); /* tiempo total (para sacar promedio) */
         for (unsigned long long i = 0; i < algorithms.size(); i++) {
@@ -59,27 +67,33 @@ void test(std::vector<Algorithm> algorithms, std::vector<long long>sizes, long l
 
         /* imprimimos resultados en el .csv */
         for (unsigned long long i = 0; i < algorithms.size(); i++) {
-            std::cout << algorithms[i].name << ";";
-            std::cout << size << ";";
-            std::cout << total_time[i]/repetitions << std::endl;
+            file << algorithms[i].name << ";";
+            file << exp << ";";
+            file << size << ";";
+            file << total_time[i]/repetitions << std::endl;
         }
+
+        double progress_ratio = (exp - size_exps.front())/(size_exps.back() - size_exps.front());
+        std::cout << "  " << round(1000*progress_ratio)/10 << "\t%" << std::endl;
     }
 
     std::cout << "mismatch counter: " << mismatch_count << std::endl;
 }
 
 int main() {
-    Algorithm algo1(brute_force, "Brute force");
-    Algorithm algo2(divide_and_conquer, "Divide and conquer");
+    Algorithm algo1(brute_force, "brute_force");
+    Algorithm algo2(divide_and_conquer, "divide_and_conquer");
+    Algorithm algo3(brute_force_upgrade, "better_brute_force");
+    Algorithm algo4(divide_and_conquer_upgrade, "better_divide_and_conquer");
 
-    std::vector<long long > sizes;
-    for (int i = 3; i <= 12; i++) {
-        sizes.push_back(1 << i);
+    std::vector<double> size_exps;
+    for (double i = 3; i <= 15 + 0.1; i += 0.25) {
+        size_exps.push_back(i);
     }
 
     long long repetitions = 30;
 
-    test({algo1, algo2}, sizes, repetitions);
+    test({algo1, algo3, algo2, algo4}, size_exps, repetitions);
 
     return 0;
 }

@@ -2,7 +2,7 @@
 
 #include <stdio.h>
 #include <algorithm>
-#include <math.h>
+#include <cmath>
 
 /* FUNCIONES DEL HEAP */
 
@@ -167,8 +167,8 @@ double divide_and_conquer(std::vector<Point> points) {
 double div_and_conq_recursive_upgrade(std::vector<Point> Xordered, std::vector<Point> Yordered) {
     int X_size = Xordered.size();
     
-    // Se implementa brute force desde 2^5 = 32 hacia abajo
-    if (X_size <= 32) {
+    // Se implementa brute force desde 2^4 = 16 hacia abajo
+    if (X_size <= 16) {
         return brute_force_squared(Xordered);
     }
 
@@ -204,7 +204,7 @@ double div_and_conq_recursive_upgrade(std::vector<Point> Xordered, std::vector<P
     std::vector<Point> Y2;
 
     for (Point point : Yordered) {
-        if (abs(axis - point.x) <= d) {
+        if (pow(axis - point.x, 2) <= d) {
             Y2.push_back(point);
         }
     }
@@ -221,8 +221,12 @@ double div_and_conq_recursive_upgrade(std::vector<Point> Xordered, std::vector<P
 
 double divide_and_conquer_upgrade(std::vector<Point> points) {
 
+    // Se implementa brute force desde 2^4 = 16 hacia abajo
+    if (points.size() <= 16) {
+        return brute_force_upgrade(points);
+    }
     std::vector<Point> orderedX = orderByAscendant(points, X);
     std::vector<Point> orderedY = orderByAscendant(points, Y);
 
-    return div_and_conq_recursive_upgrade(orderedX, orderedY);
+    return sqrt(div_and_conq_recursive_upgrade(orderedX, orderedY));
 }
