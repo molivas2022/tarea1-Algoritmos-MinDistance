@@ -9,4 +9,7 @@ struct Point {
     double distance_with(Point point2) {
         return sqrt( pow(this->x - point2.x, 2) + pow(this->y - point2.y, 2) );
     }
+    double square_dist_with(Point point2) {
+        return (pow(this->x - point2.x, 2) + pow(this->y - point2.y, 2));
+    }
 };

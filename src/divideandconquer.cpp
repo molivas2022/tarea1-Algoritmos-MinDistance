@@ -161,3 +161,68 @@ double divide_and_conquer(std::vector<Point> points) {
 
     return div_and_conq_recursive(orderedX, orderedY);
 }
+
+/* DIVIDE AND CONQUER MEJORADO */
+
+double div_and_conq_recursive_upgrade(std::vector<Point> Xordered, std::vector<Point> Yordered) {
+    int X_size = Xordered.size();
+    
+    // Se implementa brute force desde 2^5 = 32 hacia abajo
+    if (X_size <= 32) {
+        return brute_force_squared(Xordered);
+    }
+
+    // Dividir
+    int half = ceil( (double) X_size / 2.0 );
+    double axis = (Xordered[half-1].x + Xordered[half].x) / 2.0;
+
+    std::vector<Point> X_l;
+    std::vector<Point> X_r;
+
+    for (int i = 0; i < X_size; i++) {
+        if (i < half) X_l.push_back(Xordered[i]);
+        else X_r.push_back(Xordered[i]);
+    }
+
+    std::vector<Point> Y_l;
+    std::vector<Point> Y_r;
+
+    for (Point point : Yordered) {
+        if (point.x < axis) Y_l.push_back(point);
+        else Y_r.push_back(point);
+    }
+
+    // Conquistar
+
+    double d_l = div_and_conq_recursive_upgrade(X_l, Y_l);
+    double d_r = div_and_conq_recursive_upgrade(X_r, Y_r);
+
+    // Combinar
+
+    double d = d_l < d_r ? d_l : d_r;
+
+    std::vector<Point> Y2;
+
+    for (Point point : Yordered) {
+        if (abs(axis - point.x) <= d) {
+            Y2.push_back(point);
+        }
+    }
+
+    for (int i = 0; i < (int) Y2.size(); i++) {
+        int limit = i+7 < (int) Y2.size()-1 ? i+7 : Y2.size()-1;
+        for (int j = i+1; j <= limit; j++) {
+            if (Y2[i].square_dist_with(Y2[j]) < d) d = Y2[i].square_dist_with(Y2[j]);
+        }
+    }
+
+    return d;
+}
+
+double divide_and_conquer_upgrade(std::vector<Point> points) {
+
+    std::vector<Point> orderedX = orderByAscendant(points, X);
+    std::vector<Point> orderedY = orderByAscendant(points, Y);
+
+    return div_and_conq_recursive_upgrade(orderedX, orderedY);
+}
